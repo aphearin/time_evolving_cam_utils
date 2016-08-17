@@ -3,6 +3,9 @@ in the ASCII format provided by Peter Behroozi
 """
 import numpy as np
 import os
+from lookback_time import lookback_time
+
+fname="/Users/aphearin/Dropbox/UniverseMachine/data/histories/small_sfh_catalog_1.002310.txt"
 
 
 def get_num_total_lines(fname):
@@ -183,3 +186,5 @@ def get_reduced_filename(fname, stellar_mass_cut, **kwargs):
     output_fname = os.path.join(dirname, new_basename)
     return output_fname
 
+scale_factor_array = get_scales(fname)
+times = lookback_time(scale_factor_array)
