@@ -137,10 +137,17 @@ def reduced_history_generator(fname, stellar_mass_cut,
             else:
                 yield raw_line
 
-        for __ in range(num_total_lines - num_header_lines):
+        for i in range(num_total_lines - num_header_lines):
             raw_line = f.readline()
             line = raw_line.strip().split(' ')
-            if float(line[stellar_mass_index]) > stellar_mass_cut:
+            try:
+                sm = float(line[stellar_mass_index])
+            except ValueError:
+                msg = ("Python message = ``ValueError: could not convert string to float: SM``\n"
+                    "My message: printing the failing line #{0}:\n"
+                    "{1}".format(i, raw_line))
+                raise ValueError(msg)
+            if sm > stellar_mass_cut:
                 yield ' '.join(line[c] for c in column_indices_to_yield) + '\n'
 
 
