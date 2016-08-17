@@ -38,6 +38,17 @@ def get_header(fname):
     return header
 
 
+def get_scales(fname):
+    """
+    """
+    with open(fname) as f:
+        __ = f.readline()
+        __ = f.readline()
+        __ = f.readline()
+        scale_list = [float(a) for a in f.readline().strip()[13:].split(' ')]
+    return np.array(scale_list)
+
+
 def get_num_scales(fname):
     """
     """
