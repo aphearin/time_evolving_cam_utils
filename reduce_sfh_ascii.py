@@ -11,10 +11,6 @@ parser.add_argument("fname", type=str,
 parser.add_argument("log10_sm_cut", type=float,
     help="stellar mass cut in log10 units")
 
-# parser.add_argument("-overwrite",
-#     help="Overwrite the existing data file (if present). ",
-#     default=False, type=bool)
-
 parser.add_argument("-output_dirname",
     help="Disk location to store the reduced catalog. Default is same directory as input file.",
     default=None, type=str)

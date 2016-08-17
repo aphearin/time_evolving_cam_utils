@@ -139,16 +139,13 @@ def reduced_history_generator(fname, stellar_mass_cut,
 
         for i in range(num_total_lines - num_header_lines):
             raw_line = f.readline()
-            line = raw_line.strip().split(' ')
-            try:
+            if raw_line[0] == '#':
+                pass
+            else:
+                line = raw_line.strip().split(' ')
                 sm = float(line[stellar_mass_index])
-            except ValueError:
-                msg = ("Python message = ``ValueError: could not convert string to float: SM``\n"
-                    "My message: printing the failing line #{0}:\n"
-                    "{1}".format(i, raw_line))
-                raise ValueError(msg)
-            if sm > stellar_mass_cut:
-                yield ' '.join(line[c] for c in column_indices_to_yield) + '\n'
+                if sm > stellar_mass_cut:
+                    yield ' '.join(line[c] for c in column_indices_to_yield) + '\n'
 
 
 def write_reduced_history(fname, stellar_mass_cut, output_fname, **kwargs):
@@ -166,7 +163,7 @@ def get_reduced_filename(fname, stellar_mass_cut, **kwargs):
     """
     """
     history = kwargs.get('history', 'sfh')
-    dirname = kwargs.get('dirname', os.path.dirname(fname))
+    dirname = kwargs.get('output_dirname', os.path.dirname(fname))
 
     basename = os.path.basename(fname)
     sm_string = "smcut_{0:.2f}".format(np.log10(stellar_mass_cut))
