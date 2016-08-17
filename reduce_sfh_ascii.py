@@ -16,11 +16,11 @@ parser.add_argument("log10_sm_cut", type=float,
 #     default=False, type=bool)
 
 parser.add_argument("-output_dirname",
-    help="Disk location to store the reduced catalog",
+    help="Disk location to store the reduced catalog. Default is same directory as input file.",
     default=None, type=str)
 
 parser.add_argument("-history",
-    help="star-formation vs. ICL history",
+    help="star-formation vs. ICL history. Default is sfh.",
     choices=['sfh', 'iclh'], default='sfh', type=str)
 
 
