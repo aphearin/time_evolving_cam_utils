@@ -3,7 +3,7 @@ in the ASCII format provided by Peter Behroozi
 """
 import numpy as np
 import os
-from lookback_time import lookback_time
+from astropy.cosmology import Planck13
 
 fname="/Users/aphearin/Dropbox/UniverseMachine/data/histories/small_sfh_catalog_1.002310.txt"
 
@@ -187,4 +187,5 @@ def get_reduced_filename(fname, stellar_mass_cut, **kwargs):
     return output_fname
 
 scale_factor_array = get_scales(fname)
-times = lookback_time(scale_factor_array)
+z = 1./scale_factor_array - 1.
+times = Planck13.age(z).value
