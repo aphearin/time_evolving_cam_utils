@@ -53,7 +53,7 @@ def stellar_mass_history(sfr_history, cosmic_age_array=bolplanck_ages):
     """
     dt_in_gyr = np.diff(cosmic_age_array)
     frac_loss = mass_loss_fraction(dt_in_gyr)
-    integrand = sfr_history[:, :-1]*dt_in_gyr*frac_loss
+    integrand = sfr_history[:, :-1]*dt_in_gyr*(1.-frac_loss)
     return np.insert(np.cumsum(integrand, axis=1), 0, 0, axis=1)*1e9
 
 
