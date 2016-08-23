@@ -4,6 +4,9 @@ also summary statistics like quenching times.
 """
 import numpy as np
 
+fname="/Users/aphearin/Dropbox/UniverseMachine/data/histories/prelim_sfh_reduction/times.npy"
+bolplanck_ages = np.load(fname)
+
 
 def mass_loss_fraction(dt):
     """
@@ -22,19 +25,22 @@ def mass_loss_fraction(dt):
     return 0.05*np.log(1 + 1000.*dt/1.4)
 
 
-def stellar_mass_history(sfr_history, cosmic_age):
+def stellar_mass_history(sfr_history, cosmic_age_array=bolplanck_ages):
     """
+    Calculate stellar mass histories from star formation histories.
+
     Parameters
     ----------
     sfr_history : array
         Array of shape (num_gals, num_time_steps) storing the value of SFR
         in units of Msun/yr for each galaxy as a function of cosmic time.
 
-    cosmic_age : array
+    cosmic_age_array : array
         Array of shape (num_time_steps, ) storing the values of the age of the
-        universe at which galaxy SFR has been tabulated. Sign and normalization
-        convention should be such that cosmic_age[0] = 0 corresponds to the
-        big bang, with units in Gyr.
+        universe at which galaxy SFR has been tabulated, in units of Gyr.
+        Sign and normalization convention are such that galaxies have
+        zero stellar mass at cosmic_age_array[0], with the present-day
+        cosmic epoch being stored in cosmic_age_array[-1]
 
     Returns
     --------
@@ -45,7 +51,10 @@ def stellar_mass_history(sfr_history, cosmic_age):
         assumes that all galaxies begin with zero stellar mass
         and that mass loss is calculated according to the Behroozi+13 fitting function.
     """
-    dt_in_Gyr = np.diff(cosmic_age)
+    dt_in_gyr = np.diff(cosmic_age_array)
+    frac_loss = mass_loss_fraction(dt_in_gyr)
+    integrand = sfr_history[:, :-1]*dt_in_gyr*frac_loss
+    return np.insert(np.cumsum(integrand, axis=1), 0, 0, axis=1)*1e9
 
 
 
