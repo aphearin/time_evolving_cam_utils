@@ -44,3 +44,15 @@ def stellar_mass_t_now(sfr_history, t_now, cosmic_age_array=bolplanck_ages):
     dt = np.diff(t)
     frac_remaining = np.append(remaining_mass_fraction(t_now, t[1:-1]), 1.)
     return np.sum(sfh_midpoints_matrix * dt * frac_remaining, axis=1) * 1e9
+
+
+def stellar_mass_histories(sfr_history):
+    """
+    """
+    times = np.copy(bolplanck_ages)
+    times[0] += 0.001
+    times[-1] -= 0.001
+    result = np.zeros_like(sfr_history)
+    for idx, time in enumerate(times):
+        result[:, idx] = stellar_mass_t_now(sfr_history, time)
+    return result
