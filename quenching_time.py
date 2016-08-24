@@ -2,8 +2,18 @@
 """
 import numpy as np
 
+fname="/Users/aphearin/Dropbox/UniverseMachine/data/histories/prelim_sfh_reduction/times.npy"
+bolplanck_ages = np.load(fname)
 
-def quenching_indices(matrix):
+
+def quenching_time(ssfr_matrix, cosmic_age_array=bolplanck_ages):
+    """
+    """
+    idx_quenching_time = quenching_indices(ssfr_matrix)
+    return cosmic_age_array[idx_quenching_time]
+
+
+def quenching_indices(ssfr_matrix):
     """ Given a boolean-valued matrix of shape (m, n),
     for each row of the matrix find the largest column index storing a False value.
     Intended to use when calculating quenching timescales and
@@ -12,7 +22,7 @@ def quenching_indices(matrix):
     If given a matrix storing sSFR values in logarithmic units,
     where the matrix is of shape (num_gals, num_timesteps),
     with log10(sSFR) = -11 as a quenching cutoff,
-    quenching_indices(matrix <= -11) will give a length-num_gals array of indices
+    quenching_indices(ssfr_matrix <= -11) will give a length-num_gals array of indices
     at which each galaxy was last actively forming stars.
     Each returned index can be used with an array of cosmic ages
     (or, equivalently, an array of lookback-times)
@@ -29,7 +39,7 @@ def quenching_indices(matrix):
 
     Parameters
     -----------
-    matrix : array
+    ssfr_matrix : array
         Boolean array of shape (m, n)
 
     Returns
@@ -37,12 +47,13 @@ def quenching_indices(matrix):
     quenching_index : array
         Length-m array of integers, each between [0, n-1], inclusive.
     """
-    assert len(np.shape(matrix)) == 2, "Input ``matrix`` must be a 2-d ndarray"
+    assert len(np.shape(ssfr_matrix)) == 2, "Input ``ssfr_matrix`` must be a 2-d ndarray"
 
-    idx_quenching_times = (matrix.shape[1] - 1) - np.argmin(matrix[:, ::-1], axis=1)
+    is_quenched_matrix = ssfr_matrix <= -11
+    idx_quenching_times = (is_quenched_matrix.shape[1] - 1) - np.argmin(is_quenched_matrix[:, ::-1], axis=1)
 
     # Now fix the edge case where the galaxy has always been quenched
-    idx_quenching_times[np.all(matrix == True, axis=1)] = 0
+    idx_quenching_times[np.all(is_quenched_matrix == True, axis=1)] = 0
 
     return idx_quenching_times
 
