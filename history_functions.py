@@ -56,3 +56,26 @@ def stellar_mass_histories(sfr_history):
     for idx, time in enumerate(times):
         result[:, idx] = stellar_mass_t_now(sfr_history, time)
     return result
+
+
+def ssfr_histories(sfr_history, sm_history):
+    """
+    """
+    ssfr_history = np.zeros_like(sfr_history)
+
+    zero_mask = (sfr_history == 0) | (sm_history == 0)
+    nzeros = len(sfr_history[zero_mask])
+    ssfr_history[zero_mask] = np.random.normal(loc=-12, scale=0.3, size=nzeros)
+    ssfr_history[~zero_mask] = np.log10(sfr_history[~zero_mask] / sm_history[~zero_mask])
+    return ssfr_history
+
+
+def ssfr_at_infall(sfr_history, sm_history, infall_times, cosmic_age_array=bolplanck_ages):
+    """
+    """
+    ssfr_matrix = ssfr_histories(sfr_history, sm_history)
+    idx_infall = np.searchsorted(cosmic_age_array, infall_times)
+    return ssfr_matrix[np.arange(len(idx_infall)), idx_infall]
+
+
+
