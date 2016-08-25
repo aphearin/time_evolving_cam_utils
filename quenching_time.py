@@ -1,14 +1,19 @@
 """
 """
 import numpy as np
+from history_functions import ssfr_histories
+
 
 fname="/Users/aphearin/Dropbox/UniverseMachine/data/histories/prelim_sfh_reduction/times.npy"
 bolplanck_ages = np.load(fname)
 
 
-def quenching_time(ssfr_matrix, cosmic_age_array=bolplanck_ages):
+def quenching_time(sfr_history, sm_history, cosmic_age_array=bolplanck_ages):
     """
     """
+    assert np.shape(sfr_history) == np.shape(sm_history), "smh and sfh inputs must have the same shape"
+
+    ssfr_matrix = ssfr_histories(sfr_history, sm_history)
     idx_quenching_time = quenching_indices(ssfr_matrix)
     return cosmic_age_array[idx_quenching_time]
 
@@ -56,4 +61,3 @@ def quenching_indices(ssfr_matrix):
     idx_quenching_times[np.all(is_quenched_matrix == True, axis=1)] = 0
 
     return idx_quenching_times
-
