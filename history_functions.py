@@ -78,4 +78,9 @@ def ssfr_at_infall(sfr_history, sm_history, infall_times, cosmic_age_array=bolpl
     return ssfr_matrix[np.arange(len(idx_infall)), idx_infall]
 
 
+def nearest_time_idx(t, cosmic_age_array=bolplanck_ages):
+    """
+    """
+    return np.minimum(np.searchsorted(cosmic_age_array, t), len(cosmic_age_array)-1)
+
 
