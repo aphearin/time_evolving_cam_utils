@@ -6,6 +6,12 @@ import numpy as np
 import filename_utils
 
 
+#ID UPID Mpeak Mnow V@Mpeak Vnow Rvir Tidal_Tdyn Rank_DVmax(Z-score)
+#Random_Rank(Z-score) SM ICL SFR Obs_SM Obs_SFR Obs_UV
+#SFH(1..num_scales) ICLH(1..num_scales) SM_main_progenitor(1..num_scales)
+#ICL_main_progenitor(1..num_scales) M_main_progenitor(1..num_scales) SFR_main_progenitor(1..num_scales)
+
+
 def _compression_safe_opener(fname):
     """ Determine whether to use *open* or *gzip.open* to read
     the input file, depending on whether or not the file is compressed.
@@ -76,6 +82,22 @@ def save_history_binary(raw_data_array, idx, colname, output_subvol_dirname, num
     np.save(output_fname, arr)
 
 
+def save_singleprop_binary(raw_data_array, output_subvol_dirname, idx, colname, dtype):
+    """
+    """
+    dt = np.dtype(dtype)
+    arr = np.array(raw_data_array[:, idx], dtype=dt)
+
+    output_dirname = os.path.join(output_subvol_dirname, colname)
+    try:
+        os.makedirs(output_dirname)
+    except OSError:
+        pass
+    output_basename = colname+'_data_'+str(arr.dtype.type.__name__)
+    output_fname = os.path.join(output_dirname, output_basename)
+    np.save(output_fname, arr)
+
+
 def process_snapshot_into_binaries(input_dirname, scale_factor_string, output_dirname):
     """
     """
@@ -93,3 +115,23 @@ def process_snapshot_into_binaries(input_dirname, scale_factor_string, output_di
         save_history_binary(raw_data_array, 3, 'icl_mp', output_subvol_dirname, num_scales)
         save_history_binary(raw_data_array, 4, 'mpeak_mp', output_subvol_dirname, num_scales)
         save_history_binary(raw_data_array, 5, 'sfr_mp', output_subvol_dirname, num_scales)
+
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 0, 'halo_id', 'i8')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 1, 'halo_upid', 'i8')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 2, 'halo_mpeak', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 3, 'halo_mvir', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 4, 'halo_vmax_at_mpeak', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 5, 'halo_vmax_', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 7, 'halo_tidal_force', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 10, 'stellar_mass', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 12, 'sfr', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 13, 'obs_stellar_mass', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 14, 'obs_sfr', 'f4')
+
+
+#ID UPID Mpeak Mnow V@Mpeak Vnow Rvir Tidal_Tdyn Rank_DVmax(Z-score)
+#Random_Rank(Z-score) SM ICL SFR Obs_SM Obs_SFR Obs_UV
+
+
+
+
