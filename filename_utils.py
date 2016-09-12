@@ -3,6 +3,9 @@
 import os
 import fnmatch
 
+fname_prefix="sfh_catalog_"
+fname_suffix=".txt.gz"
+
 
 def fname_generator(input_dirname, filepat):
     """ Yield all the files in ``input_dirname`` with basenames matching
@@ -13,7 +16,7 @@ def fname_generator(input_dirname, filepat):
             yield os.path.join(path, name)
 
 
-def parse_fname(fname, fname_prefix="sfh_catalog_", fname_suffix=".txt.gz"):
+def parse_fname(fname, fname_prefix=fname_prefix, fname_suffix=fname_suffix):
     """
     """
     basename = os.path.basename(fname)
