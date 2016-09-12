@@ -79,7 +79,7 @@ def save_history_binary(raw_data_array, idx, colname, output_subvol_dirname, num
 def process_snapshot_into_binaries(input_dirname, scale_factor_string, output_dirname):
     """
     """
-    filepat = filename_utils.fname_prefix + scale_factor_string
+    filepat = filename_utils.fname_prefix + scale_factor_string + '*'
     for fname in filename_utils.fname_generator(input_dirname, filepat):
         num_scales = infer_num_scales(fname)
         raw_data_array = np.array(list(sm_cut_raw_data_generator(fname)))
