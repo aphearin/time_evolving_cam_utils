@@ -7,6 +7,7 @@ import os
 
 default_root_dirname = ("/Users/aphearin/Dropbox/UniverseMachine/"
                         "data/binary_reductions/z0/binaries")
+default_num_subvols = 144
 
 
 def assemble_catalog(snapshot_root_dirname, num_subvols, *propnames):
