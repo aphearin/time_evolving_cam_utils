@@ -16,6 +16,15 @@ def fname_generator(input_dirname, filepat):
             yield os.path.join(path, name)
 
 
+def subdir_generator(input_dirname, filepat):
+    """ Search through the input_dirname and yield the name of
+    any subdirectory whose name matches the specified file pattern.
+    """
+    for path, dirlist, filelist in os.walk(input_dirname):
+        for subdirname in fnmatch.filter(dirlist, filepat):
+            yield os.path.join(input_dirname, subdirname)
+
+
 def parse_fname(fname, fname_prefix=fname_prefix, fname_suffix=fname_suffix):
     """
     """
