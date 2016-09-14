@@ -121,7 +121,7 @@ def process_snapshot_into_binaries(input_dirname, scale_factor_string, output_di
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 2, 'halo_mpeak', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 3, 'halo_mvir', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 4, 'halo_vmax_at_mpeak', 'f4')
-        save_singleprop_binary(raw_data_array, output_subvol_dirname, 5, 'halo_vmax_', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 5, 'halo_vmax', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 7, 'halo_tidal_force', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 10, 'stellar_mass', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 12, 'sfr', 'f4')
