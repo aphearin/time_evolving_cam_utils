@@ -8,8 +8,8 @@ fname_suffix=".txt.gz"
 
 
 def fname_generator(input_dirname, filepat):
-    """ Yield all the files in ``input_dirname`` with basenames matching
-    the specified file pattern.
+    """ Search through all the files in the full directory tree of ``input_dirname``
+    for files with basenames matching the specified file pattern.
     """
     for path, dirlist, filelist in os.walk(input_dirname):
         for name in fnmatch.filter(filelist, filepat):
