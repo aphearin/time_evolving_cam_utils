@@ -5,13 +5,19 @@ from filename_utils import fname_generator, subdir_generator
 import os
 
 
-default_root_dirname = ("/Users/aphearin/Dropbox/UniverseMachine/"
-                        "data/binary_reductions/z0/binaries")
+default_root_dirname = "/Users/aphearin/Dropbox/UniverseMachine/data/binary_reductions/z0/binaries"
 default_num_subvols = 144
 
 
 def assemble_catalog(snapshot_root_dirname, num_subvols, *propnames):
     """
+    Parameters
+    -----------
+    snapshot_root_dirname : string
+
+    num_subvols : int
+
+    propnames : sequence
     """
     propnames = add_haloid_to_propnames(*propnames)
 
