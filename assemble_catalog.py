@@ -11,11 +11,14 @@ default_num_subvols = 144
 
 
 def assemble_catalog(snapshot_root_dirname, num_subvols, *propnames):
+    """
+    """
+    propnames = add_haloid_to_propnames(*propnames)
 
     dt, num_gals = build_composite_dtype(snapshot_root_dirname, *propnames)
 
-    subvol_dirname = subvol_dirname_from_snapshot_root_dirname(snapshot_root_dirname)
-    dtype_string_prop0 = infer_dtype_string_from_propname(subvol_dirname, propnames[0])
+    subvol0_dirname = subvol_dirname_from_snapshot_root_dirname(snapshot_root_dirname)
+    dtype_string_prop0 = infer_dtype_string_from_propname(subvol0_dirname, propnames[0])
     num_gals = len(assemble_single_property_array(snapshot_root_dirname,
         propnames[0], dtype_string_prop0, num_subvols))
 
@@ -23,7 +26,7 @@ def assemble_catalog(snapshot_root_dirname, num_subvols, *propnames):
 
     arr = np.empty(num_gals, dtype=dt)
     for propname in propnames:
-        dtype_string = infer_dtype_string_from_propname(subvol_dirname, propname)
+        dtype_string = infer_dtype_string_from_propname(subvol0_dirname, propname)
         arr[propname] = assemble_single_property_array(snapshot_root_dirname,
             propname, dtype_string, num_subvols)
 
@@ -107,3 +110,10 @@ def subvol_fname_generator(snapshot_root_dirname, propname, dtype_string, num_su
         basename = propname_to_basename(propname, dtype_string)
         yield os.path.join(snapshot_root_dirname, dirname, propname, basename)
 
+
+def add_haloid_to_propnames(*propnames):
+    propnames = list(propnames)
+    propnames.insert(0, 'halo_id')
+    propnames = list(set(propnames))
+    propnames.insert(0, propnames.pop(propnames.index('halo_id')))
+    return propnames
