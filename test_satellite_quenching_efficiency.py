@@ -15,12 +15,14 @@ def test_build_matching_central_lookup_table():
     logsm_bins = np.linspace(logsm_min, logsm_max, 50)
 
     start = time()
-    table = build_matching_central_lookup_table(central_sm_histories, central_is_quenched, logsm_bins)
+    table, lookup_table_counts = build_matching_central_lookup_table(
+        central_sm_histories, central_is_quenched, logsm_bins)
     end = time()
     runtime = end-start
     assert runtime < 10
 
     assert np.all(table[~np.isnan(table)] == 1)
+    assert np.sum(lookup_table_counts) >= num_centrals
 
 
 def test_satellite_lookup_table_indices():
@@ -31,7 +33,8 @@ def test_satellite_lookup_table_indices():
     central_sm_histories = np.random.uniform(10**logsm_min, 10**logsm_max, num_centrals*num_time_steps)
     central_sm_histories = np.reshape(central_sm_histories, (num_centrals, num_time_steps))
     central_is_quenched = np.random.randint(0, 2, num_centrals).astype(bool)
-    lookup_table = build_matching_central_lookup_table(central_sm_histories, central_is_quenched, logsm_bins)
+    lookup_table, lookup_table_counts = build_matching_central_lookup_table(
+        central_sm_histories, central_is_quenched, logsm_bins)
 
     num_satellites = 500
     satellite_sm_histories = np.random.uniform(10**logsm_min, 10**logsm_max, num_satellites*num_time_steps)

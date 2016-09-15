@@ -12,14 +12,16 @@ def build_matching_central_lookup_table(central_sm_histories, central_is_quenche
 
     num_sm_bins = len(logsm_bins)-1
     lookup_table = np.zeros((num_sm_bins, num_time_steps))
+    counts = np.zeros((num_sm_bins, num_time_steps))
 
     for ism, logsm_low, logsm_high in zip(range(num_sm_bins), logsm_bins[:-1], logsm_bins[1:]):
         for idx_time in range(num_time_steps):
             ism_values = central_sm_histories[:, idx_time]
             ism_mask = (ism_values >= 10**logsm_low) & (ism_values < 10**logsm_high)
             lookup_table[ism, idx_time] = central_is_quenched[ism_mask].mean()
+            counts[ism, idx_time] = len(central_is_quenched[ism_mask])
 
-    return lookup_table
+    return lookup_table, counts
 
 
 def satellite_lookup_table_indices(satellite_sm_histories, satellite_time_indices, logsm_bins):
@@ -40,7 +42,7 @@ def satellite_lookup_table_indices(satellite_sm_histories, satellite_time_indice
 def satellite_quenching_efficiency(satellite_sm_histories, satellite_sm, satellite_time_indices,
         satellite_is_quenched, central_sm_histories, central_is_quenched, logsm_bins):
 
-        cen_lookup_table = build_matching_central_lookup_table(
+        cen_lookup_table, lookup_table_counts = build_matching_central_lookup_table(
             central_sm_histories, central_is_quenched, logsm_bins)
         sat_table_idx = satellite_lookup_table_indices(
             satellite_sm_histories, satellite_time_indices, logsm_bins)
