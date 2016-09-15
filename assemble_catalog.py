@@ -17,16 +17,9 @@ def assemble_catalog(snapshot_root_dirname, num_subvols, *propnames):
 
     dt, num_gals = build_composite_dtype(snapshot_root_dirname, *propnames)
 
-    subvol0_dirname = subvol_dirname_from_snapshot_root_dirname(snapshot_root_dirname)
-    dtype_string_prop0 = infer_dtype_string_from_propname(subvol0_dirname, propnames[0])
-    num_gals = len(assemble_single_property_array(snapshot_root_dirname,
-        propnames[0], dtype_string_prop0, num_subvols))
-
-    print("Number of galaxies = {0}".format(num_gals))
-
     arr = np.empty(num_gals, dtype=dt)
     for propname in propnames:
-        dtype_string = infer_dtype_string_from_propname(subvol0_dirname, propname)
+        dtype_string = infer_dtype_string_from_propname(snapshot_root_dirname, propname)
         arr[propname] = assemble_single_property_array(snapshot_root_dirname,
             propname, dtype_string, num_subvols)
 
@@ -34,13 +27,12 @@ def assemble_catalog(snapshot_root_dirname, num_subvols, *propnames):
 
 
 def build_composite_dtype(snapshot_root_dirname, *propnames):
-    subvol_dirname = subvol_dirname_from_snapshot_root_dirname(snapshot_root_dirname)
 
     dtype_list = []
     ngals = 0
     for iprop, propname in enumerate(propnames):
-        dtype_string = infer_dtype_string_from_propname(subvol_dirname, propname)
-        gen = subvol_fname_generator(snapshot_root_dirname, propname, dtype_string, 1)
+        dtype_string = infer_dtype_string_from_propname(snapshot_root_dirname, propname)
+        gen = subvol_fname_generator(snapshot_root_dirname, propname, dtype_string, default_num_subvols)
         for isubvol, subvol_fname in enumerate(gen):
             arr = np.load(subvol_fname)
             if isubvol == 0:
@@ -62,9 +54,10 @@ def subvol_dirname_from_snapshot_root_dirname(snapshot_root_dirname, subvol_stri
         return subdirname
 
 
-def infer_dtype_string_from_propname(subvol_dirname, propname):
+def infer_dtype_string_from_propname(snapshot_root_dirname, propname):
     """
     """
+    subvol_dirname = subvol_dirname_from_snapshot_root_dirname(snapshot_root_dirname)
     subdirname = os.path.join(subvol_dirname, propname)
     filepat = propname + '_data_*.npy'
 
