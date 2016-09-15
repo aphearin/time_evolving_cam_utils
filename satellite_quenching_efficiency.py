@@ -57,6 +57,7 @@ def satellite_quenching_efficiency(satellite_sm_histories, satellite_sm, satelli
         cen_counts_ism = lookup_table_counts[sat_table_idx[0][ism_mask], sat_table_idx[1][ism_mask]]
         cen_fq_ism_mask = ~np.isnan(cen_fq_ism)
         fq_matching_cen[ism] = np.mean(cen_fq_ism[cen_fq_ism_mask]*cen_counts_ism[cen_fq_ism_mask])
+        fq_matching_cen[ism] /= np.sum(cen_counts_ism[cen_fq_ism_mask])
 
     return fq_sat, fq_matching_cen
 
