@@ -42,6 +42,7 @@ def satellite_lookup_table_indices(satellite_sm_histories, satellite_time_indice
 def satellite_quenching_efficiency(satellite_sm_histories, satellite_sm, satellite_time_indices,
         satellite_is_quenched, cen_lookup_table, lookup_table_counts, logsm_bins):
 
+    satellite_sm_at_infall = satellite_sm_histories[np.arange(len(satellite_sm)), satellite_time_indices]
     sat_table_idx = satellite_lookup_table_indices(
         satellite_sm_histories, satellite_time_indices, logsm_bins)
     sat_sm_idx = np.digitize(satellite_sm, 10**logsm_bins)
@@ -53,10 +54,11 @@ def satellite_quenching_efficiency(satellite_sm_histories, satellite_sm, satelli
         ism_mask = (satellite_sm >= 10**logsm_low) & (satellite_sm < 10**logsm_high)
         fq_sat[ism] = satellite_is_quenched[ism_mask].mean()
 
-        cen_fq_ism = cen_lookup_table[sat_table_idx[0][ism_mask], sat_table_idx[1][ism_mask]]
-        cen_counts_ism = lookup_table_counts[sat_table_idx[0][ism_mask], sat_table_idx[1][ism_mask]]
+        ism_infall_mask = (satellite_sm_at_infall >= 10**logsm_low) & (satellite_sm_at_infall < 10**logsm_high)
+        cen_fq_ism = cen_lookup_table[sat_table_idx[0][ism_infall_mask], sat_table_idx[1][ism_infall_mask]]
+        cen_counts_ism = lookup_table_counts[sat_table_idx[0][ism_infall_mask], sat_table_idx[1][ism_infall_mask]]
         cen_fq_ism_mask = ~np.isnan(cen_fq_ism)
-        fq_matching_cen[ism] = np.mean(cen_fq_ism[cen_fq_ism_mask]*cen_counts_ism[cen_fq_ism_mask])
+        fq_matching_cen[ism] = np.sum(cen_fq_ism[cen_fq_ism_mask]*cen_counts_ism[cen_fq_ism_mask])
         fq_matching_cen[ism] /= np.sum(cen_counts_ism[cen_fq_ism_mask])
 
     return fq_sat, fq_matching_cen
