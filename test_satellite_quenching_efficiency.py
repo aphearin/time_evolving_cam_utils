@@ -45,4 +45,5 @@ def test_satellite_lookup_table_indices():
         satellite_sm_histories, satellite_time_indices, logsm_bins)
 
     matching_vals = lookup_table[satellite_idx]
+    assert matching_vals.shape == (num_satellites, )
 
