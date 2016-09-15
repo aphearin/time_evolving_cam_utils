@@ -23,6 +23,8 @@ def build_matching_central_lookup_table(central_sm_histories, central_is_quenche
 
 
 def satellite_lookup_table_indices(satellite_sm_histories, satellite_time_indices, logsm_bins):
+    """
+    """
     num_satellites, num_time_steps = satellite_sm_histories.shape
     msg = "satellite_sm_histories and satellite_time_indices and have inconsistent shapes"
     assert num_satellites == len(satellite_time_indices), msg
@@ -33,3 +35,20 @@ def satellite_lookup_table_indices(satellite_sm_histories, satellite_time_indice
     satellite_sm_idx[satellite_sm_idx >= len(logsm_bins)-1] = len(logsm_bins)-2
 
     return np.array((satellite_sm_idx, satellite_time_indices))
+
+
+def satellite_quenching_efficiency(satellite_sm_histories, satellite_sm, satellite_time_indices,
+        satellite_is_quenched, central_sm_histories, central_is_quenched, logsm_bins):
+
+        cen_lookup_table = build_matching_central_lookup_table(
+            central_sm_histories, central_is_quenched, logsm_bins)
+        sat_table_idx = satellite_lookup_table_indices(
+            satellite_sm_histories, satellite_time_indices, logsm_bins)
+        sat_sm_idx = np.digitize(satellite_sm, 10**logsm_bins)
+        sat_sm_idx[sat_sm_idx>=len(logsm_bins)-1] = len(logsm_bins)-2
+        assert 4 == 5, "Unfinished function"
+
+
+
+
+
