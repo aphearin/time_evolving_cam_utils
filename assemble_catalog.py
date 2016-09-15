@@ -88,7 +88,6 @@ def assemble_single_property_array(snapshot_root_dirname, propname, dtype_string
             snapshot_root_dirname, propname, dtype_string, num_subvols)):
 
         new_subvol = np.load(fname)
-        # print("Shape of subvol {0} = {1}".format(i, np.shape(new_subvol)))
 
         try:
             subvol_array = np.vstack([subvol_array, new_subvol])
