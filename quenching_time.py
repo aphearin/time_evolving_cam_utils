@@ -14,11 +14,11 @@ def quenching_time(sfr_history, sm_history, cosmic_age_array=bolplanck_ages):
     assert np.shape(sfr_history) == np.shape(sm_history), "smh and sfh inputs must have the same shape"
 
     ssfr_matrix = ssfr_histories(sfr_history, sm_history)
-    idx_quenching_time = quenching_indices(ssfr_matrix)
+    idx_quenching_time = quenching_indices(ssfr_matrix <= -11)
     return cosmic_age_array[idx_quenching_time]
 
 
-def quenching_indices(ssfr_matrix):
+def quenching_indices(is_quenched_matrix):
     """ Given a boolean-valued matrix of shape (m, n),
     for each row of the matrix find the largest column index storing a False value.
     Intended to use when calculating quenching timescales and
@@ -44,7 +44,7 @@ def quenching_indices(ssfr_matrix):
 
     Parameters
     -----------
-    ssfr_matrix : array
+    is_quenched_matrix : array
         Boolean array of shape (m, n)
 
     Returns
@@ -52,9 +52,9 @@ def quenching_indices(ssfr_matrix):
     quenching_index : array
         Length-m array of integers, each between [0, n-1], inclusive.
     """
-    assert len(np.shape(ssfr_matrix)) == 2, "Input ``ssfr_matrix`` must be a 2-d ndarray"
+    assert len(np.shape(is_quenched_matrix)) == 2, "Input ``is_quenched_matrix`` must be a 2-d ndarray"
+    assert is_quenched_matrix.dtype == bool, "Input ``is_quenched_matrix`` must have dtype boolean"
 
-    is_quenched_matrix = ssfr_matrix <= -11
     idx_quenching_times = (is_quenched_matrix.shape[1] - 1) - np.argmin(is_quenched_matrix[:, ::-1], axis=1)
 
     # Now fix the edge case where the galaxy has always been quenched
