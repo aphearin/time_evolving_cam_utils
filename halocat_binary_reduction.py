@@ -13,8 +13,10 @@ default_halocat_fname = os.path.join(default_halocat_dirname, default_halocat_ba
 default_column_info_fname = os.path.join(default_halocat_dirname, "column_info.dat")
 
 
-def create_output_dir(halocat_fname=default_halocat_fname):
-    output_base_dirname = os.path.dirname(halocat_fname)
+def create_output_dir(halocat_fname=default_halocat_fname, output_base_dirname=None):
+    if output_base_dirname is None:
+        output_base_dirname = os.path.dirname(halocat_fname)
+
     halocat_basename = os.path.basename(halocat_fname)
     try:
         # sanity check on string formatting
@@ -34,7 +36,7 @@ def create_output_dir(halocat_fname=default_halocat_fname):
     return output_binaries_dirname
 
 
-def read_column_info(column_info_fname=default_column_info_fname):
+def read_column_info_array(column_info_fname=default_column_info_fname):
     column_info_array = Table.read(column_info_fname, format='ascii.commented_header')
     return column_info_array.as_array()
 
@@ -52,6 +54,10 @@ def get_column_info(colname, column_info_array):
 
 
 def build_composite_dt(column_info_array, *colnames):
+    assert 'halo_id' in column_info_array['colname'], "``halo_id`` is a required column name"
+
+    colnames = add_haloid_to_propnames(*colnames)
+
     try:
         assert len(colnames) == len(set(colnames))
     except AssertionError:
@@ -90,4 +96,48 @@ def read_structured_array_from_ascii(fname, column_info_array, *colnames):
     return np.array(list(row_generator(fname, column_info_array, *colnames)), dtype=dt)
 
 
+def get_dtype_string(dt):
+    return str(dt.type.__name__)
 
+
+def get_binary_basename_from_colname(colname, column_info_array):
+    dt = column_info_array['coltype'][column_info_array['colname']==colname][0]
+
+    dtype_string = get_dtype_string(np.dtype(dt))
+    return colname+'_data_' + dtype_string
+
+
+def save_structured_array_columns(arr, column_info_array, output_root_dirname, *colnames):
+    for colname in colnames:
+        output_dirname = os.path.join(output_root_dirname, colname)
+        try:
+            os.makedirs(output_dirname)
+        except OSError:
+            pass
+        output_basename = get_binary_basename_from_colname(colname, column_info_array)
+        output_fname = os.path.join(output_dirname, output_basename)
+        np.save(output_fname, arr[colname])
+
+
+def add_haloid_to_propnames(*propnames):
+    propnames = list(propnames)
+    propnames.insert(0, 'halo_id')
+    propnames = list(set(propnames))
+    propnames.insert(0, propnames.pop(propnames.index('halo_id')))
+    return propnames
+
+
+def assemble_halocat(snapshot_root_dirname, column_info_array, *propnames):
+    binary_basename = get_binary_basename_from_colname('halo_id', column_info_array)
+    halo_id_fname = os.path.join(snapshot_root_dirname, 'halo_id', binary_basename)
+    num_gals = len(np.load(halo_id_fname+'.npy'))
+    propnames = add_haloid_to_propnames(*propnames)
+    dt = build_composite_dt(column_info_array, *propnames)
+
+    arr = np.empty(num_gals, dtype=dt)
+    for propname in propnames:
+        basename = get_binary_basename_from_colname(propname, column_info_array)
+        fname = os.path.join(snapshot_root_dirname, propname, basename+'.npy')
+        arr[propname] = np.load(fname)
+
+    return arr
