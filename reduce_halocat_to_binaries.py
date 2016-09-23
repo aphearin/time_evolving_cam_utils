@@ -10,7 +10,7 @@ parser.add_argument("halocat_fname", type=str,
     help="Absolute path to the hlist file storing the halo catalog ascii data")
 
 parser.add_argument("output_dirname", type=str,
-    help="Absolute path to the hlist file storing the halo catalog ascii data")
+    help="Absolute path to the directory where the binaries will be stored")
 
 parser.add_argument("colnames", nargs='*',
     help="Name(s) of the columns to reduce to binaries. "
