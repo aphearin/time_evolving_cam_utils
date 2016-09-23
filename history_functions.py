@@ -70,6 +70,16 @@ def ssfr_histories(sfr_history, sm_history):
     return ssfr_history
 
 
+def calculate_in_situ_ssfr_history(sfr_mp, sm_mp, loc=-11.8, scale=0.3):
+    nonzero_mask = sm_mp > 0.
+    result = np.zeros_like(nonzero_mask).astype('f4')
+    result[nonzero_mask] = sfr_mp[nonzero_mask] / sm_mp[nonzero_mask]
+    result[~nonzero_mask] = np.nan
+    result[np.isnan(result)] = 10**np.random.normal(loc=loc, scale=scale,
+        size=len(result[np.isnan(result)]))
+    return result
+
+
 def ssfr_at_infall(sfr_history, sm_history, infall_times, cosmic_age_array=bolplanck_ages):
     """
     """
