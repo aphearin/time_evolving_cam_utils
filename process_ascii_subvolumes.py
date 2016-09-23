@@ -4,6 +4,7 @@ import gzip
 import os
 import numpy as np
 import filename_utils
+from time import time
 
 
 #ID UPID Mpeak Mnow V@Mpeak Vnow Rvir Tidal_Tdyn Rank_DVmax(Z-score)
@@ -34,7 +35,7 @@ def show_header(fname):
         print(raw_line)
 
 
-def sm_cut_raw_data_generator(fname, stellar_mass_index=10, logsm_cut=9.5):
+def sm_cut_raw_data_generator(fname, stellar_mass_index=10, logsm_cut=9.):
     sm_cut = 10**logsm_cut
     opener = _compression_safe_opener(fname)
     with opener(fname, 'r') as f:
@@ -101,6 +102,7 @@ def save_singleprop_binary(raw_data_array, output_subvol_dirname, idx, colname, 
 def process_snapshot_into_binaries(input_dirname, scale_factor_string, output_dirname):
     """
     """
+    start = time()
     filepat = filename_utils.fname_prefix + scale_factor_string + '*'
     for fname in filename_utils.fname_generator(input_dirname, filepat):
         num_scales = infer_num_scales(fname)
@@ -128,7 +130,8 @@ def process_snapshot_into_binaries(input_dirname, scale_factor_string, output_di
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 13, 'obs_stellar_mass', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 14, 'obs_sfr', 'f4')
 
-
+    end = time()
+    print("Total runtime to reduce ascii to binares = {0:.1f} minutes".format(60.*(end-start)))
 #ID UPID Mpeak Mnow V@Mpeak Vnow Rvir Tidal_Tdyn Rank_DVmax(Z-score)
 #Random_Rank(Z-score) SM ICL SFR Obs_SM Obs_SFR Obs_UV
 
