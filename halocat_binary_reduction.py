@@ -4,6 +4,7 @@ import os
 import numpy as np
 from astropy.table import Table
 from process_ascii_subvolumes import _compression_safe_opener
+from time import time
 
 
 default_halocat_dirname = "/Users/aphearin/work/sims/bolplanck/halo_catalogs/halotools_v0p4"
@@ -13,7 +14,7 @@ default_halocat_fname = os.path.join(default_halocat_dirname, default_halocat_ba
 default_column_info_fname = os.path.join(default_halocat_dirname, "column_info.dat")
 
 
-def create_output_dir(halocat_fname=default_halocat_fname, output_base_dirname=None):
+def create_output_dir(halocat_fname, output_base_dirname=None):
     if output_base_dirname is None:
         output_base_dirname = os.path.dirname(halocat_fname)
 
@@ -92,8 +93,12 @@ def row_generator(fname, column_info_array, *colnames):
 
 
 def read_structured_array_from_ascii(fname, column_info_array, *colnames):
+    start = time()
     dt = build_composite_dt(column_info_array, *colnames)
-    return np.array(list(row_generator(fname, column_info_array, *colnames)), dtype=dt)
+    arr = np.array(list(row_generator(fname, column_info_array, *colnames)), dtype=dt)
+    end = time()
+    print("Total runtime to read ascii data into a structured array = {0} seconds".format(end-start))
+    return arr
 
 
 def get_dtype_string(dt):

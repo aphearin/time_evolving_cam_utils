@@ -31,7 +31,7 @@ arr = halocat_binary_reduction.read_structured_array_from_ascii(
 print("Number of galaxies = {0}".format(len(arr)))
 
 snapshot_root_dirname = halocat_binary_reduction.create_output_dir(
-    output_base_dirname=args.output_dirname)
+    args.halocat_fname, output_base_dirname=args.output_dirname)
 
 halocat_binary_reduction.save_structured_array_columns(
     arr, column_info_array, snapshot_root_dirname, *args.colnames)
