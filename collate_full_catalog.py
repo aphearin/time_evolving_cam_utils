@@ -64,6 +64,8 @@ def collate_catalog(z_string, history_colnames=[], halocat_propnames=[],
         is_backsplash_mask = is_central_mask*(history_data['first_acc_scale'] < backsplash_cutoff*scale_factor)
         history_data['gal_type'][is_backsplash_mask] = 'backsplash'
 
+    if verbose:
+        print("\a")
     return history_data
 
 

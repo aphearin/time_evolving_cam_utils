@@ -90,3 +90,6 @@ ENV/
 
 # Temporary Jupyter notebooks
 Untitled*.ipynb
+
+# Plotting data
+PLOT_DATA/*
