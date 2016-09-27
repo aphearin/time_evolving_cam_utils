@@ -15,7 +15,7 @@ root_dropbox_dirname = "/Users/aphearin/Dropbox/UniverseMachine/data"
 
 
 def collate_catalog(z_string, history_colnames=[], halocat_propnames=[],
-        num_subvols=144, verbose=False):
+        num_subvols=144, verbose=False, backsplash_cutoff=0.98):
     assert z_string in ('z0', 'z1', 'z2')
 
     print("... Assembling history data")
@@ -49,8 +49,20 @@ def collate_catalog(z_string, history_colnames=[], halocat_propnames=[],
         new_dtype = halocat_data[new_colname].dtype
         history_data[new_colname] = np.zeros(len(history_data), dtype=new_dtype)
         history_data[new_colname][idxA] = halocat_data[new_colname][idxB]
-    history_data['orphan'] = True
-    history_data['orphan'][idxA] = False
+
+    history_data['gal_type'] = np.empty(len(history_data), dtype='S10')
+
+    is_orphan_mask = np.ones(len(history_data), dtype=bool)
+    is_orphan_mask[idxA] = False
+    is_central_mask = (history_data['halo_upid'] == -1)*(~is_orphan_mask)
+    is_satellite_mask = (history_data['halo_upid'] != -1)*(~is_orphan_mask)
+    history_data['gal_type'][is_orphan_mask] = 'orphan'
+    history_data['gal_type'][is_central_mask] = 'central'
+    history_data['gal_type'][is_satellite_mask] = 'satellite'
+    if 'first_acc_scale' in history_data.keys():
+        scale_factor = get_scale_factor_value(z_string)
+        is_backsplash_mask = is_central_mask*(history_data['first_acc_scale'] < backsplash_cutoff*scale_factor)
+        history_data['gal_type'][is_backsplash_mask] = 'backsplash'
 
     return history_data
 
@@ -64,3 +76,17 @@ def get_scale_factor_string(z_string):
         return 'a_0.33406'
     else:
         raise ValueError("Redshift {0} not available".format(z_string))
+
+
+def get_scale_factor_value(z_string):
+    if z_string == 'z0':
+        return 1.00231
+    elif z_string == 'z1':
+        return 0.50112
+    elif z_string == 'z2':
+        return 0.33406
+    else:
+        raise ValueError("Redshift {0} not available".format(z_string))
+
+
+
