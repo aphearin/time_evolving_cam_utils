@@ -21,7 +21,7 @@ def collate_catalog(z_string, history_colnames=[], halocat_propnames=[],
     print("... Assembling history data")
     history_data_dirname = os.path.join(root_dropbox_dirname, 'binary_reductions', z_string, 'binaries')
     history_colnames = add_haloid_to_propnames(*history_colnames)
-    history_data = assemble_history_data(history_data_dirname, num_subvols, *history_colnames)
+    history_data = Table(assemble_history_data(history_data_dirname, num_subvols, *history_colnames))
 
     print("... Assembling halo catalog data")
     scale_factor_string = get_scale_factor_string(z_string)
@@ -38,19 +38,21 @@ def collate_catalog(z_string, history_colnames=[], halocat_propnames=[],
         print("\nNumber of objects in history catalog = {0}".format(len(history_data)))
         print("Number of objects in halo catalog = {0}".format(len(halocat_data)))
         print("Number of matching objects = {0}".format(len(history_data['halo_id'][idxA])))
+        matching_fraction = len(history_data['halo_id'][idxA])/float(len(history_data['halo_id']))
+        print("Fraction of objects appearing in both catalogs = {0:.3f}".format(matching_fraction))
+        msg = 'Less than 80% matches - probably indicating a bookkeeping inconsistency'
+        assert matching_fraction > 0.8, msg
 
-    full_catalog = Table(history_data[idxA])
-    for key in halocat_propnames[1:]:
-        full_catalog[key] = halocat_data[key][idxB]
-    matching_fraction = len(full_catalog['halo_id'])/float(len(history_data['halo_id']))
-    if verbose:
-        print("Fraction of objects appearing in both catalogs = {0:.3f}".format(
-            matching_fraction))
-        if 'stellar_mass' in history_data.dtype.names:
-            print("Minimum logM* = {0:.2f}".format(np.log10(full_catalog['stellar_mass'].min())))
-    assert matching_fraction > 0.8, 'Less than 80% matches - probably indicating a bookkeeping inconsistency'
+    new_colnames = list(set(halocat_propnames) - set(history_colnames))
+    print("New colnames to add from halo catalog = {0}".format(new_colnames))
+    for new_colname in new_colnames:
+        new_dtype = halocat_data[new_colname].dtype
+        history_data[new_colname] = np.zeros(len(history_data), dtype=new_dtype)
+        history_data[new_colname][idxA] = halocat_data[new_colname][idxB]
+    history_data['orphan'] = True
+    history_data['orphan'][idxA] = False
 
-    return full_catalog
+    return history_data
 
 
 def get_scale_factor_string(z_string):
