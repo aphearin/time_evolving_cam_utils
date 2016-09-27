@@ -85,6 +85,7 @@ def ssfr_at_infall(sfr_history, sm_history, infall_times, cosmic_age_array=bolpl
     """
     ssfr_matrix = ssfr_histories(sfr_history, sm_history)
     idx_infall = np.searchsorted(cosmic_age_array, infall_times)
+    idx_infall = np.where(idx_infall >= ssfr_matrix.shape[1], ssfr_matrix.shape[1]-1, idx_infall)
     return ssfr_matrix[np.arange(len(idx_infall)), idx_infall]
 
 

@@ -60,4 +60,8 @@ def quenching_indices(is_quenched_matrix):
     # Now fix the edge case where the galaxy has always been quenched
     idx_quenching_times[np.all(is_quenched_matrix == True, axis=1)] = 0
 
+    # Any spillover belongs to the outermost bin
+    idx_quenching_times = np.where(idx_quenching_times >= is_quenched_matrix.shape[1],
+        is_quenched_matrix.shape[1]-1, idx_quenching_times)
+
     return idx_quenching_times
