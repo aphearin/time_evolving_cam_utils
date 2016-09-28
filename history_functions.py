@@ -34,7 +34,7 @@ def stellar_mass_t_now(sfr_history, t_now, cosmic_age_array=bolplanck_ages):
     """
     """
     assert t_now > cosmic_age_array[0], "This function does not work for t_now < t_init"
-    assert t_now < cosmic_age_array[-1], "This function does not work for t_now > today"
+    assert t_now <= cosmic_age_array[-1], "This function does not work for t_now > today"
 
     idx_t_now = np.searchsorted(cosmic_age_array, t_now)
     sfh_matrix = np.insert(sfr_history[:, :idx_t_now+1], 0, sfr_history[:, 0], axis=1)
