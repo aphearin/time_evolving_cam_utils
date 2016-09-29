@@ -44,7 +44,7 @@ def sm_cut_raw_data_generator(fname, stellar_mass_index=10, logsm_cut=9.):
                 raw_line = next(f)
                 if raw_line[0] != '#':
                     line = raw_line.strip().split()
-                    if float(line[10]) >= sm_cut:
+                    if float(line[stellar_mass_index]) >= sm_cut:
                         yield line
             except StopIteration:
                 break
