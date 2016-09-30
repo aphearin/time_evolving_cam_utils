@@ -102,7 +102,6 @@ def save_singleprop_binary(raw_data_array, output_subvol_dirname, idx, colname, 
 def process_snapshot_into_binaries(input_dirname, scale_factor_string, output_dirname):
     """
     """
-    start = time()
     filepat = filename_utils.fname_prefix + scale_factor_string + '*'
     for fname in filename_utils.fname_generator(input_dirname, filepat):
         print("Reducing {0} to a collection of Numpy binaries".format(os.path.basename(fname)))
@@ -134,8 +133,6 @@ def process_snapshot_into_binaries(input_dirname, scale_factor_string, output_di
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 16, 'a_first_infall', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 17, 'a_last_infall', 'f4')
 
-    end = time()
-    print("Total runtime to reduce ascii to binares = {0:.1f} minutes".format(60.*(end-start)))
 #ID UPID Mpeak Mnow V@Mpeak Vnow Rvir Tidal_Tdyn Rank_DVmax(Z-score)
 #Random_Rank(Z-score) SM ICL SFR Obs_SM Obs_SFR Obs_UV A_first_infall A_last_infall
 
