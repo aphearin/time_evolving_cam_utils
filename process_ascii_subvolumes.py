@@ -8,9 +8,10 @@ from time import time
 
 
 #ID UPID Mpeak Mnow V@Mpeak Vnow Rvir Tidal_Tdyn Rank_DVmax(Z-score)
-#Random_Rank(Z-score) SM ICL SFR Obs_SM Obs_SFR Obs_UV
+#Random_Rank(Z-score) SM ICL SFR Obs_SM Obs_SFR Obs_UV A_first_infall A_last_infall
 #SFH(1..num_scales) ICLH(1..num_scales) SM_main_progenitor(1..num_scales)
-#ICL_main_progenitor(1..num_scales) M_main_progenitor(1..num_scales) SFR_main_progenitor(1..num_scales)
+#ICL_main_progenitor(1..num_scales) M_main_progenitor(1..num_scales)
+#SFR_main_progenitor(1..num_scales)
 
 
 def _compression_safe_opener(fname):
@@ -50,20 +51,19 @@ def sm_cut_raw_data_generator(fname, stellar_mass_index=10, logsm_cut=9.):
                 break
 
 
-def infer_num_scales(fname, num_single_props=16, num_histories=6):
+def infer_num_scales(fname):
 
     opener = _compression_safe_opener(fname)
     with opener(fname, 'r') as f:
         while True:
             raw_line = next(f)
-            if raw_line[0] != '#':
-                line = raw_line.strip().split()
-                num_cols_total = len(line)
+            if raw_line[:11] == '#num_scales':
+                num_scales = int(raw_line.strip().split()[-1])
                 break
-        return (num_cols_total - num_single_props) / num_histories
+        return num_scales
 
 
-def history_array(raw_data_array, ihist, num_scales, num_single_props=16, num_histories=6):
+def history_array(raw_data_array, ihist, num_scales, num_single_props=18, num_histories=6):
     first_idx = num_single_props + ihist*num_scales
     last_idx = first_idx + num_scales
     return np.array(raw_data_array[:, first_idx:last_idx], dtype='f4')
@@ -127,14 +127,17 @@ def process_snapshot_into_binaries(input_dirname, scale_factor_string, output_di
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 5, 'halo_vmax', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 7, 'halo_tidal_force', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 10, 'stellar_mass', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 11, 'icl', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 12, 'sfr', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 13, 'obs_stellar_mass', 'f4')
         save_singleprop_binary(raw_data_array, output_subvol_dirname, 14, 'obs_sfr', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 16, 'a_first_infall', 'f4')
+        save_singleprop_binary(raw_data_array, output_subvol_dirname, 17, 'a_last_infall', 'f4')
 
     end = time()
     print("Total runtime to reduce ascii to binares = {0:.1f} minutes".format(60.*(end-start)))
 #ID UPID Mpeak Mnow V@Mpeak Vnow Rvir Tidal_Tdyn Rank_DVmax(Z-score)
-#Random_Rank(Z-score) SM ICL SFR Obs_SM Obs_SFR Obs_UV
+#Random_Rank(Z-score) SM ICL SFR Obs_SM Obs_SFR Obs_UV A_first_infall A_last_infall
 
 
 
