@@ -14,18 +14,20 @@ from halocat_binary_reduction import assemble_halocat, read_column_info_array
 root_dropbox_dirname = "/Users/aphearin/Dropbox/UniverseMachine/data"
 
 
-def collate_catalog(z_string, history_colnames=[], halocat_propnames=[],
-        num_subvols=144, verbose=False, backsplash_cutoff=0.98):
-    assert z_string in ('z0', 'z1', 'z2')
+def collate_catalog(a_string, history_colnames=[], halocat_propnames=[],
+        num_subvols=144, verbose=False, backsplash_cutoff=0.99):
+    assert a_string in ('a_1.002310', )
 
     print("... Assembling history data")
-    history_data_dirname = os.path.join(root_dropbox_dirname, 'binary_reductions', z_string, 'binaries')
+    history_data_dirname = os.path.join(root_dropbox_dirname, 'binary_reductions',
+        '0930', a_string)
     history_colnames = add_haloid_to_propnames(*history_colnames)
     history_data = Table(assemble_history_data(history_data_dirname, num_subvols, *history_colnames))
 
     print("... Assembling halo catalog data")
-    scale_factor_string = get_scale_factor_string(z_string)
-    halocat_binary_dirname = os.path.join(root_dropbox_dirname, 'halocat_snapshot', scale_factor_string)
+    halocat_scale_factor_string = get_halocat_scale_factor_string(a_string)
+    halocat_binary_dirname = os.path.join(root_dropbox_dirname, 'halocat_snapshot',
+        halocat_scale_factor_string)
     column_info_fname = os.path.join(os.path.dirname(halocat_binary_dirname), 'column_info.dat')
     column_info_array = read_column_info_array(column_info_fname)
     halocat_propnames = add_haloid_to_propnames(*halocat_propnames)
@@ -59,9 +61,9 @@ def collate_catalog(z_string, history_colnames=[], halocat_propnames=[],
     history_data['gal_type'][is_orphan_mask] = 'orphan'
     history_data['gal_type'][is_central_mask] = 'central'
     history_data['gal_type'][is_satellite_mask] = 'satellite'
-    if 'first_acc_scale' in history_data.keys():
-        scale_factor = get_scale_factor_value(z_string)
-        is_backsplash_mask = is_central_mask*(history_data['first_acc_scale'] < backsplash_cutoff*scale_factor)
+    if 'a_first_infall' in history_data.keys():
+        scale_factor = get_scale_factor_value(a_string)
+        is_backsplash_mask = is_central_mask*(history_data['a_first_infall'] < backsplash_cutoff*scale_factor)
         history_data['gal_type'][is_backsplash_mask] = 'backsplash'
 
     if verbose:
@@ -69,26 +71,15 @@ def collate_catalog(z_string, history_colnames=[], halocat_propnames=[],
     return history_data
 
 
-def get_scale_factor_string(z_string):
-    if z_string == 'z0':
+def get_halocat_scale_factor_string(a_string):
+    if a_string == 'a_1.002310':
         return 'a_1.00231'
-    elif z_string == 'z1':
-        return 'a_0.50112'
-    elif z_string == 'z2':
-        return 'a_0.33406'
     else:
-        raise ValueError("Redshift {0} not available".format(z_string))
+        raise ValueError("Scale factor string ``{0}`` not recognized".format(a_string))
 
 
-def get_scale_factor_value(z_string):
-    if z_string == 'z0':
-        return 1.00231
-    elif z_string == 'z1':
-        return 0.50112
-    elif z_string == 'z2':
-        return 0.33406
-    else:
-        raise ValueError("Redshift {0} not available".format(z_string))
+def get_scale_factor_value(a_string):
+    return float(a_string[2:])
 
 
 
