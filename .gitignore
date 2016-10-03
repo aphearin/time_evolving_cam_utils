@@ -93,3 +93,5 @@ Untitled*.ipynb
 
 # Plotting data
 PLOT_DATA/*
+
+FIGS/*0p1*.pdf
