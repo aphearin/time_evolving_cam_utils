@@ -5,7 +5,7 @@ from filename_utils import fname_generator, subdir_generator
 import os
 
 
-default_root_dirname = "/Users/aphearin/Dropbox/UniverseMachine/data/binary_reductions/z0/binaries"
+default_root_dirname = "/Users/aphearin/work/UniverseMachine_data/0930_binaries/a_1.002310"
 default_num_subvols = 144
 
 

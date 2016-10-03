@@ -12,6 +12,7 @@ from halocat_binary_reduction import assemble_halocat, read_column_info_array
 
 
 root_dropbox_dirname = "/Users/aphearin/Dropbox/UniverseMachine/data"
+root_binaries_dirname = "/Users/aphearin/work/UniverseMachine_data/0930_binaries"
 
 
 def collate_catalog(a_string, history_colnames=[], halocat_propnames=[],
@@ -19,8 +20,7 @@ def collate_catalog(a_string, history_colnames=[], halocat_propnames=[],
     assert a_string in ('a_1.002310', )
 
     print("... Assembling history data")
-    history_data_dirname = os.path.join(root_dropbox_dirname, 'binary_reductions',
-        '0930', a_string)
+    history_data_dirname = os.path.join(root_binaries_dirname, a_string)
     history_colnames = add_haloid_to_propnames(*history_colnames)
     history_data = Table(assemble_history_data(history_data_dirname, num_subvols, *history_colnames))
 
