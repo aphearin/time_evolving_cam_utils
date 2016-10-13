@@ -17,7 +17,6 @@ root_binaries_dirname = "/Users/aphearin/work/UniverseMachine_data/0930_binaries
 
 def collate_catalog(a_string, history_colnames=[], halocat_propnames=[],
         num_subvols=144, verbose=False, backsplash_cutoff=0.99):
-    # assert a_string in ('a_1.002310', )
 
     print("... Assembling history data")
     history_data_dirname = os.path.join(root_binaries_dirname, a_string)

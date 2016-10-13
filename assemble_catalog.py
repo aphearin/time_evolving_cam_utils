@@ -57,7 +57,11 @@ def subvol_dirname_from_snapshot_root_dirname(snapshot_root_dirname, subvol_stri
     else:
         for subdirname in subdir_generator(snapshot_root_dirname, 'subvol_*'):
             break
-        return subdirname
+        try:
+            return subdirname
+        except:
+            raise NameError("sub-directory ``{0}`` does not exist".format(
+                snapshot_root_dirname+'/subvol_*'))
 
 
 def infer_dtype_string_from_propname(snapshot_root_dirname, propname):
