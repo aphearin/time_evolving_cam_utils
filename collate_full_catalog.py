@@ -12,7 +12,7 @@ from halocat_binary_reduction import assemble_halocat, read_column_info_array
 
 
 root_dropbox_dirname = "/Users/aphearin/Dropbox/UniverseMachine/data"
-root_binaries_dirname = "/Users/aphearin/work/UniverseMachine_data/0930_binaries"
+root_binaries_dirname = "/Users/aphearin/work/UniverseMachine/data/0930_binaries"
 
 
 def collate_catalog(a_string, history_colnames=[], halocat_propnames=[],
