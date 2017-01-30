@@ -4,14 +4,21 @@ import gzip
 import os
 import numpy as np
 import filename_utils
-from time import time
 
 
-#ID UPID Mpeak Mnow V@Mpeak Vnow Rvir Tidal_Tdyn Rank_DVmax(Z-score)
-#Random_Rank(Z-score) SM ICL SFR Obs_SM Obs_SFR Obs_UV A_first_infall A_last_infall
-#SFH(1..num_scales) ICLH(1..num_scales) SM_main_progenitor(1..num_scales)
-#ICL_main_progenitor(1..num_scales) M_main_progenitor(1..num_scales)
-#SFR_main_progenitor(1..num_scales)
+def retrieve_column_numbers(column_info_fname, colname):
+    """
+    """
+    with open(column_info_fname, 'r') as f:
+        while True:
+            try:
+                raw_line = next(f)
+                line = raw_line.strip().split()
+                if line[0] == colname:
+                    return int(line[1]), int(line[2])
+            except StopIteration:
+                raise ValueError("Column name {0} not found in {1}".format(
+                    colname, column_info_fname))
 
 
 def _compression_safe_opener(fname):
